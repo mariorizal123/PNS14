@@ -59,7 +59,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("<p style='color: #7f8c8d; font-size: 16px;'>Uji coba berbagai skenario untuk melihat dampak intervensi (Iklan & Diskon) terhadap keuntungan secara real-time.</p>", unsafe_allow_html=True)
-st.divider()
 
 # --- SIDEBAR KONTROL ---
 with st.sidebar:
