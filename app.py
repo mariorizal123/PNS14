@@ -91,7 +91,7 @@ with col3:
     pertumbuhan = (delta / baseline_pred) * 100 if baseline_pred != 0 else 0
     st.metric("Pertumbuhan Laba", f"{pertumbuhan:.1f}%")
 
-st.write("---")
+# st.write("---")
 
 # --- KONTEN BAWAH (CHART & INSIGHT) ---
 col_chart, col_insight = st.columns([2, 1])
