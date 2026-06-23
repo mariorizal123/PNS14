@@ -38,7 +38,7 @@ def run_simulation(model, iklan, diskon):
 
 model = load_model()
 
-# --- HEADER ULTRA-CLEAN ---
+# --- HEADER ---
 st.title("✨ Simulator Keputusan Bisnis")
 
 # Info Mahasiswa di Tengah
@@ -71,14 +71,14 @@ with st.sidebar:
     st.header("⚙️ Parameter Kontrol")
     st.write("Sesuaikan strategi Anda:")
     
-    # Menggunakan slider bawaan yang sederhana
+    # Menggunakan slider
     iklan_slider = st.slider("Anggaran Iklan (Jt)", min_value=0, max_value=50, value=10, step=1)
     diskon_slider = st.slider("Besaran Diskon (%)", min_value=0, max_value=20, value=5, step=1)
 
 # --- EKSEKUSI ---
 baseline_pred, prediksi, delta = run_simulation(model, iklan_slider, diskon_slider)
 
-# --- PANEL METRIK (CLEAN) ---
+# --- PANEL METRIK ---
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -92,7 +92,7 @@ with col3:
     pertumbuhan = (delta / baseline_pred) * 100 if baseline_pred != 0 else 0
     st.metric("Pertumbuhan Laba", f"{pertumbuhan:.1f}%")
 
-st.write("") # Memberi sedikit ruang napas (whitespace)
+st.write("") # (whitespace)
 
 # --- STORYTELLING MINIMALIS ---
 if delta > 0:
@@ -102,21 +102,16 @@ elif delta < 0:
 else:
     st.info("**Kondisi Stabil**  \nIntervensi tidak memberikan perubahan signifikan terhadap keuntungan jika dibandingkan dengan kondisi awal.")
 
-st.write("") # Memberi sedikit ruang napas
-
-# --- GRAFIK ULTRA-MINIMALIS ---
+st.write("") 
 st.markdown("##### 📈 Komparasi Visual")
 
 fig, ax = plt.subplots(figsize=(7, 3.5))
 
-# Ciri khas warna yang elegan
 warna_baseline = '#bdc3c7'
 warna_skenario = '#2ecc71' if delta >= 0 else '#e74c3c'
 
-# Mengatur ketebalan bar agar terlihat proporsional
 bars = ax.bar(['Baseline', 'Skenario Baru'], [baseline_pred, prediksi], color=[warna_baseline, warna_skenario], width=0.4)
 
-# Membersihkan sumbu untuk tampilan "Clean" (Menghapus garis pinggir dan angka sumbu Y)
 ax.spines['top'].set_visible(False)
 ax.spines['right'].set_visible(False)
 ax.spines['left'].set_visible(False)
