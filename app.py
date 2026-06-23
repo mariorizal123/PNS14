@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # ==========================================
 # KONFIGURASI HALAMAN
 # ==========================================
-st.set_page_config(page_title="Simulator Bisnis", page_icon="✨", layout="centered")
+st.set_page_config(page_title="Simulator Bisnis", page_icon="✨", layout="wide")
 
 # ==========================================
 # LOGIKA MATEMATIKA & MODEL
@@ -92,39 +92,41 @@ with col3:
     pertumbuhan = (delta / baseline_pred) * 100 if baseline_pred != 0 else 0
     st.metric("Pertumbuhan Laba", f"{pertumbuhan:.1f}%")
 
-st.write("") # (whitespace)
+st.write("---")
 
-# --- STORYTELLING MINIMALIS ---
-if delta > 0:
-    st.success(f"**Tren Positif (+Rp {delta:.1f} Jt)**  \nSkenario ini diproyeksikan menguntungkan. Intervensi berhasil meningkatkan efisiensi dan mengoptimalkan margin laba.")
-elif delta < 0:
-    st.error(f"**Tren Negatif (-Rp {abs(delta):.1f} Jt)**  \nSkenario ini berisiko. Biaya yang dikeluarkan untuk pemasaran atau diskon berpotensi menekan profitabilitas inti.")
-else:
-    st.info("**Kondisi Stabil**  \nIntervensi tidak memberikan perubahan signifikan terhadap keuntungan jika dibandingkan dengan kondisi awal.")
+# --- KONTEN BAWAH (CHART & INSIGHT) ---
+col_chart, col_insight = st.columns([2, 1])
 
-st.write("") 
-st.markdown("##### 📈 Komparasi Visual")
+with col_chart:
+    st.markdown("#### Komparasi Skenario")
+    fig, ax = plt.subplots(figsize=(6, 4))
+    
+    warna_baseline = '#bdc3c7'
+    warna_skenario = '#2980b9' if delta >= 0 else '#c0392b'
+    
+    bars = ax.bar(['Baseline', 'Skenario'], [baseline_pred, prediksi], color=[warna_baseline, warna_skenario], width=0.4)
+    
+    # Styling chart
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_color('#ecf0f1')
+    ax.spines['bottom'].set_color('#bdc3c7')
+    ax.yaxis.grid(True, linestyle='--', alpha=0.5)
+    
+    # Menaruh angka nominal di atas bar
+    for bar in bars:
+        yval = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2, yval + (max(baseline_pred, prediksi)*0.02), 
+                f"Rp {yval:.1f} Jt", ha='center', va='bottom', fontsize=11, fontweight='bold', color='#34495e')
+    
+    ax.tick_params(axis='x', colors='#34495e')
+    st.pyplot(fig)
 
-fig, ax = plt.subplots(figsize=(7, 3.5))
-
-warna_baseline = '#bdc3c7'
-warna_skenario = '#2ecc71' if delta >= 0 else '#e74c3c'
-
-bars = ax.bar(['Baseline', 'Skenario Baru'], [baseline_pred, prediksi], color=[warna_baseline, warna_skenario], width=0.4)
-
-ax.spines['top'].set_visible(False)
-ax.spines['right'].set_visible(False)
-ax.spines['left'].set_visible(False)
-ax.spines['bottom'].set_color('#ecf0f1') # Garis bawah tipis
-ax.tick_params(left=False, labelleft=False) # Hilangkan label angka panjang di sumbu kiri
-
-# Menaruh angka nominal langsung mengambang di atas bar
-for bar in bars:
-    yval = bar.get_height()
-    ax.text(bar.get_x() + bar.get_width()/2, yval + (max(baseline_pred, prediksi)*0.03), 
-            f"Rp {yval:.1f} Jt", ha='center', va='bottom', fontsize=11, fontweight='bold', color='#2c3e50')
-
-# Menyesuaikan warna teks sumbu X
-ax.tick_params(axis='x', colors='#34495e')
-
-st.pyplot(fig)
+with col_insight:
+    st.markdown("#### Analisis Dampak")
+    if delta > 0:
+        st.success(f"**Proyeksi Positif**\n\nPenyesuaian parameter menghasilkan estimasi peningkatan laba sebesar **Rp {delta:.1f} Jt** dibandingkan baseline.")
+    elif delta < 0:
+        st.error(f"**Risiko Penurunan**\n\nSkenario ini memproyeksikan penurunan laba sebesar **Rp {abs(delta):.1f} Jt**. Diperlukan evaluasi ulang terhadap rasio pengeluaran iklan dan diskon.")
+    else:
+        st.info("**Kondisi Netral**\n\nTidak ada perubahan signifikan pada estimasi laba dibandingkan kondisi baseline.")
